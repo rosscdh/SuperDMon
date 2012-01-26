@@ -1,0 +1,61 @@
+<h2>Gearman status</h2>
+<fieldset class="module">
+{% if original.supervisor_port %}
+	<table>
+	{% if original.ping_server %}
+	<thead>
+		<tr>
+			<th>Ping</th>
+			<th>Status</th>
+			<th>Workers</th>
+			<th>Gearmand Version</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>{{ original.ping_server }}</td>
+			<td>
+				<table>
+					<tr>
+					<th>Task (No. Workers)</th>
+					<th>Running (No. Queued)</th>
+					</tr>
+					{% for s in original.get_status %}
+					<tr>
+					<td>{{ s.task }} ({{ s.workers }})</td>
+					<td>{{ s.running }} ({{ s.queued }})</td>
+					</tr>
+					{% endfor %}
+				</table>
+			</td>
+			<td>
+				<table>
+					<tr>
+					<th>ip</th>
+					<th>client_id</th>
+					<th>tasks</th>
+					<th>file desc</th>
+					</tr>
+				{% for w in original.get_workers %}
+				<tr>
+					<td>{{ w.ip }}</td>
+					<td>{{ w.client_id }}</td>
+					<td>{{ w.tasks }}</td>
+					<td>{{ w.file_descriptor }}</td>
+				</tr>
+				{% endfor %}
+				</table>
+			</td>
+			<td>{{ original.get_version }}</td>
+		</tr>
+	</tbody>
+	{% else %}
+	<tr>
+		<td><h1>Error: Gearman is not available at this Host {{ original.gearman_server_uri }}</h1><br/>Could not connect to specified host, is the "host" and "port" correct?</td>
+	</tr>
+	{% endif %}
+	</table>
+{% else %}
+	<h1>Error: Gearman must be assigned a port at this host {{ original.gearman_server_uri }}</h1>
+{% endif %}
+</fieldset>

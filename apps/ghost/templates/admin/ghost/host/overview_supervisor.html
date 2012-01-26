@@ -1,0 +1,53 @@
+<h2>Supervisord status</h2>
+<fieldset class="module">
+{% if original.supervisor_port %}
+<ul class="object-tools">
+<li><a class="ajax" data-target="div#overview_supervisor" data-postsuccess="update_supervisor_overview" href="#">Refresh</a></li>
+<li><a class="ajax" data-target="div#overview_supervisor" data-postsuccess="update_supervisor_overview" href="{% url admin:admin_supervisor_action host=original.pk, action='startAllProcesses' %}">Restart All Services</a></li>
+<li><a class="ajax" data-target="div#overview_supervisor" data-postsuccess="update_supervisor_overview" href="{% url admin:admin_supervisor_action host=original.pk, action='stopAllProcesses' %}">Stop All Services</a></li>
+<li><a class="ajax" data-target="div#overview_supervisor" data-postsuccess="update_supervisor_overview" href="{% url admin:admin_supervisor_action host=original.pk, action='restart' %}">Restart Supervisor</a></li>
+</ul>
+	<div class="float-left">
+	<table>
+	{% if original.supervisor %}
+	<thead>
+		<tr>
+			<th>State</th>
+			<th>Description</th>
+			<th>Name</th>
+			<th>Action</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for p in original.supervisor.getAllProcessInfo %}
+		<tr>
+			<td>{{ p.statename }}</td>
+			<td>{{ p.description }}</td>
+			<td>{{ p.group }}{% if p.name != p.group %}:{{ p.name }}{% endif %}</td>
+			<td>
+				<ul class="tools">
+					{% if p.statename == 'RUNNING' %}
+					<li><button name="" class="ajax" data-target="div#overview_supervisor" data-postsuccess="update_supervisor_overview,update_gearman_overview" rel="{% url admin:admin_supervisor_action host=original.pk, action='stopProcess' %}?pid={{ p.pid }}&name={{ p.group }}{% if p.name != p.group %}:{{ p.name }}{% endif %}">Stop</button></li>
+					{% else %}
+					<li><button name="" class="ajax" data-target="div#overview_supervisor" data-postsuccess="update_supervisor_overview,update_gearman_overview" rel="{% url admin:admin_supervisor_action host=original.pk, action='startProcess' %}?pid={{ p.pid }}&name={{ p.group }}{% if p.name != p.group %}:{{ p.name }}{% endif %}">Start</button></li>
+					{% endif %}
+					<li><button name="" class="ajax" data-target="div#superviser_ajax_output" rel="{% url admin:admin_supervisor_action host=original.pk, action='tailProcessStdoutLog' %}?pid={{ p.pid }}&name={{ p.group }}{% if p.name != p.group %}:{{ p.name }}{% endif %}&offset=0&length=1024">Tail -f Log</button></li>
+					<li><button name="" class="ajax" data-target="div#superviser_ajax_output" rel="{% url admin:admin_supervisor_action host=original.pk, action='tailProcessStderrLog' %}?pid={{ p.pid }}&name={{ p.group }}{% if p.name != p.group %}:{{ p.name }}{% endif %}&offset=0&length=1024">Tail -f Error Log</button></li>
+					<li><button name="" class="ajax" data-target="div#superviser_ajax_output" rel="{% url admin:admin_supervisor_action host=original.pk, action='clearProcessLogs' %}?pid={{ p.pid }}&name={{ p.group }}{% if p.name != p.group %}:{{ p.name }}{% endif %}">Clear Log</button></li>
+				</ul>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+	{% else %}
+	<tr>
+		<td><h1>Error: Supervisor is not available on this Host {{ original.supervisor_server_uri }}</h1><br/>Could not connect to specified host, is the "host" and "port" correct?</td>
+	</tr>
+	{% endif %}
+	</table>
+	</div>
+	<div id="superviser_ajax_output" class="float-left ajax_output"></div>
+{% else %}
+	<h1>Error: Supervisord must be assigned a port at this host {{ original.supervisor_server_uri }}</h1>
+{% endif %}
+</fieldset>

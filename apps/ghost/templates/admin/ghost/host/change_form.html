@@ -1,0 +1,105 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block after_field_sets %}
+	<div id="overview_supervisor">
+		{% include 'admin/ghost/host/overview_supervisor.html' %}
+	</div>
+	<div id="overview_gearman">
+		{% include 'admin/ghost/host/overview_gearman.html' %}
+	</div>
+	<script>
+	(function($) {
+	    $(document).ready(function($) {
+
+		    $('.ajax').live('click',function(event){
+				event.preventDefault();
+
+				url = $(this).attr('rel');
+				if (url == '')
+					url = $(this).attr('href');
+
+				target_div = $( $(this).attr('data-target') );
+				post_success = $(this).attr('data-postsuccess')	// must be a list
+
+				$.ajax({ 
+					type: 'get',
+					url: url, 
+					beforeSend: function(){
+						target_div.html('Loading...');
+					},
+					success: function(data, textStatus, XMLHttpRequest){
+						close = '<a class="close_overview" href="#">close</a>';
+
+						if (post_success) {
+							post_success = $(post_success.split(','));
+							post_success.each(function(index){
+								eval(this + '(target_div)');
+							});
+//								
+
+						}else{
+							target_div.html( close + data);
+							target_div.css('display','none').fadeIn('fast');
+						}
+					}
+				});
+		    });
+
+			$('a.close_overview').live('click',function(event){
+				event.preventDefault();
+				$(this).closest('.ajax_output').fadeOut('fast');
+			});
+
+			function update_supervisor_overview(target) {
+				$.ajax({ 
+					type: 'get',
+					url: '{% url admin:admin_supervisor_refresh host=original.pk %}', 
+					beforeSend: function(){
+						target_div.html('Loading...');
+					},
+					success: function(data, textStatus, XMLHttpRequest){
+						target.html(data)
+					}
+				});
+			}
+
+			function update_gearman_overview(target) {
+				target_div = $('#overview_gearman')
+				$.ajax({ 
+					type: 'get',
+					url: '{% url admin:admin_gearman_refresh host=original.pk %}', 
+					beforeSend: function(){
+						target_div.html('Loading...');
+					},
+					success: function(data, textStatus, XMLHttpRequest){
+						target_div.html(data)
+					}
+				});
+			}
+			
+		});
+	})(django.jQuery);
+	</script>
+	<style>
+	.ajax_output{
+		display:none;
+		position:relative;
+		overflow:scroll;
+		margin:0px 2px;
+		width:40%;
+	}
+	ul.tools li{
+	list-style: none;
+	display: inline;
+	float:left;
+	margin:0px 2px;	
+	}
+	ul.tools li button:hover{
+		-moz-box-shadow: 3px 3px 2px #888;
+		-webkit-box-shadow: 3px 3px 2px #888;
+		box-shadow: 3px 3px 2px #888;
+	}
+	</style>
+	{{ block.super }}
+{% endblock %}
