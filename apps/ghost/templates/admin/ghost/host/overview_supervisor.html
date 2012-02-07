@@ -6,6 +6,7 @@
 <li><a class="ajax" data-target="div#overview_supervisor" data-postsuccess="update_supervisor_overview" href="{% url admin:admin_supervisor_action host=original.pk, action='startAllProcesses' %}">Restart All Services</a></li>
 <li><a class="ajax" data-target="div#overview_supervisor" data-postsuccess="update_supervisor_overview" href="{% url admin:admin_supervisor_action host=original.pk, action='stopAllProcesses' %}">Stop All Services</a></li>
 <li><a class="ajax" data-target="div#overview_supervisor" data-postsuccess="update_supervisor_overview" href="{% url admin:admin_supervisor_action host=original.pk, action='restart' %}">Restart Supervisor</a></li>
+
 </ul>
 	<div class="float-left">
 	<table>
@@ -21,7 +22,7 @@
 	<tbody>
 		{% for p in original.supervisor.getAllProcessInfo %}
 		<tr>
-			<td>{{ p.statename }}</td>
+			<td><div class="{% if p.statename == 'RUNNING' %}success{% else %}error{% endif %}">{{ p.statename }}</td>
 			<td>{{ p.description }}</td>
 			<td>{{ p.group }}{% if p.name != p.group %}:{{ p.name }}{% endif %}</td>
 			<td>
@@ -31,9 +32,10 @@
 					{% else %}
 					<li><button name="" class="ajax" data-target="div#overview_supervisor" data-postsuccess="update_supervisor_overview,update_gearman_overview" rel="{% url admin:admin_supervisor_action host=original.pk, action='startProcess' %}?pid={{ p.pid }}&name={{ p.group }}{% if p.name != p.group %}:{{ p.name }}{% endif %}">Start</button></li>
 					{% endif %}
-					<li><button name="" class="ajax" data-target="div#superviser_ajax_output" rel="{% url admin:admin_supervisor_action host=original.pk, action='tailProcessStdoutLog' %}?pid={{ p.pid }}&name={{ p.group }}{% if p.name != p.group %}:{{ p.name }}{% endif %}&offset=0&length=1024">Tail -f Log</button></li>
-					<li><button name="" class="ajax" data-target="div#superviser_ajax_output" rel="{% url admin:admin_supervisor_action host=original.pk, action='tailProcessStderrLog' %}?pid={{ p.pid }}&name={{ p.group }}{% if p.name != p.group %}:{{ p.name }}{% endif %}&offset=0&length=1024">Tail -f Error Log</button></li>
-					<li><button name="" class="ajax" data-target="div#superviser_ajax_output" rel="{% url admin:admin_supervisor_action host=original.pk, action='clearProcessLogs' %}?pid={{ p.pid }}&name={{ p.group }}{% if p.name != p.group %}:{{ p.name }}{% endif %}">Clear Log</button></li>
+					<li><button name="" class="ajax" data-target="div#superviser_ajax_output" rel="{% url admin:admin_supervisor_action host=original.pk, action='tailProcessStdoutLog' %}?pid={{ p.pid }}&name={{ p.group }}{% if p.name != p.group %}:{{ p.name }}{% endif %}&offset=0&length=1024">Tail Supervisor Log</button></li>
+					<li><button name="" class="ajax" data-target="div#superviser_ajax_output" rel="{% url admin:admin_supervisor_action host=original.pk, action='tailProcessStderrLog' %}?pid={{ p.pid }}&name={{ p.group }}{% if p.name != p.group %}:{{ p.name }}{% endif %}&offset=0&length=1024">Tail Supervisor Error Log</button></li>
+					<!-- <li><button name="" class="ajax" data-target="div#superviser_ajax_output" rel="{% url admin:admin_supervisor_action host=original.pk, action='clearProcessLogs' %}?pid={{ p.pid }}&name={{ p.group }}{% if p.name != p.group %}:{{ p.name }}{% endif %}">Clear Log</button></li> -->
+					<li><button name="" class="ajax" data-target="div#superviser_ajax_output" data-postsuccess="" rel="{% url admin:admin_gearman_get_logs key=p.group %}">{{ p.group }} Logs</button></li>
 				</ul>
 			</td>
 		</tr>

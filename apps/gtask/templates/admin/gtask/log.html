@@ -1,0 +1,18 @@
+{% load humanize datetime_tags %}
+<ul>
+{% for l in logs %}
+<li>
+<strong>{{ l.timestamp|timestamp|naturalday }}{% if l.timestamp|timestamp|naturalday == 'today' %} - {{ l.timestamp|timestamp|date:"r" }}{% endif %}</strong><br/>
+<strong>request:</strong> {{ l.worker }}::{{ l.method }}<br/>
+<strong>from:</strong> {{ l.requesting_ip }}<br/>
+<strong>as</strong> {{ l.partner }} ({{ l.partnerid }})<br/>
+<strong>reversed log:</strong> <ol>{% for i in l.log %}
+	<li>
+	{{ i }}{% empty %}Nothing in log
+	</li>
+{% endfor %}</ol>
+{% empty %}
+<strong>Sorry, it appears there are no logs for redis key "{{ key }}"</strong>
+</li>
+{% endfor %}
+</ul>

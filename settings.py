@@ -118,6 +118,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'django.contrib.humanize',
 
     'debug_toolbar',
     'django_extensions',
@@ -125,6 +126,7 @@ INSTALLED_APPS = (
 
     'apps.ghost',
     'apps.gworker',
+    'apps.gtask',
 )
 
 DEBUG_TOOLBAR_CONFIG = {

@@ -13,18 +13,6 @@ CVS
 .project
 .settings/org.eclipse.php.core.prefs
 *.pyc
-## Symfony directories
-app/config/parameters.ini
-vendor/*
-app/logs
-app/cache
-web/uploads/*
-web/bundles/*
-web/admin3/*
-web/css/*
-web/images/*
-web/static/*
-src/TMP
 ## Configuration files
 #app/config/parameters.ini
 
