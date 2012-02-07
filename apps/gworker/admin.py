@@ -10,4 +10,5 @@ class WorkerAdmin(admin.ModelAdmin):
         HostInline,
     ]
 
-admin.site.register(Worker, WorkerAdmin)
+#deregistered not required at the moment
+#admin.site.register(Worker, WorkerAdmin)
